@@ -1,9 +1,9 @@
-import Image from 'next/image';
+import React from 'react';
 
 export default function Home() {
   return (
     <div className='flex h-screen justify-center items-center'>
-      <h1 className='text-2xl text-red-700'>Start Journey..Happy Journey..</h1>
+      <h1 className='text-2xl text-red-700'>Start Coding..Happy Journey..</h1>
     </div>
   );
 }
