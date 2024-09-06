@@ -4,6 +4,7 @@ import Head from 'next/head';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { ChakraProvider } from '@chakra-ui/react';
+import { CartProvider } from '@/context/CartContext';
 
 // const inter = Inter({ subsets: ['latin'] });
 
@@ -29,9 +30,11 @@ export default function RootLayout({ children }) {
           />
         </Head>
         <body>
-          <Header />
-          <ChakraProvider>{children}</ChakraProvider>
-          <Footer />
+          <CartProvider>
+            <Header />
+            <ChakraProvider>{children}</ChakraProvider>
+            <Footer />
+          </CartProvider>
         </body>
       </>
     </html>

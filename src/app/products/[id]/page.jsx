@@ -5,12 +5,26 @@ import { getProductById, getRelatedProducts } from '@/lib/api';
 import Image from 'next/image';
 import Link from 'next/link';
 import ProductSkeleton from '@/ui/ProductSkeleton';
+import { useCart } from '@/context/CartContext';
+import { useToast } from '@chakra-ui/react';
 
 export default function ProductDetails({ params }) {
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
+  const { addToCart } = useCart();
+  const toast = useToast();
+
+  const handleAddToCart = () => {
+    addToCart(product, quantity);
+    toast({
+      title: 'Product added to Cart',
+      status: 'success',
+      duration: 2000,
+      isClosable: true,
+    });
+  };
 
   useEffect(() => {
     // Fetch product and related products on component mount
@@ -50,7 +64,7 @@ export default function ProductDetails({ params }) {
 
   if (loading) {
     return (
-      <div>
+      <div className='py-10'>
         <ProductSkeleton />
       </div>
     );
@@ -154,7 +168,9 @@ export default function ProductDetails({ params }) {
                 +
               </button>
             </div>
-            <button className='ml-4 bg-green-700 hover:bg-orange-600 text-white px-6 py-3 rounded-md'>
+            <button
+              className='ml-4 bg-green-700 hover:bg-orange-600 text-white px-6 py-3 rounded-md'
+              onClick={handleAddToCart}>
               Add to Cart
             </button>
           </div>
@@ -165,7 +181,24 @@ export default function ProductDetails({ params }) {
       {relatedProducts.length > 0 && (
         <div className='container mx-auto px-2 md:px-16 py-8'>
           <div className='mt-12'>
-            <h2 className='text-2xl font-bold mb-6'>Related Products</h2>
+            <div className='mb-6'>
+              <h2 className='text-2xl font-bold'>Related Products</h2>
+              <div className='w-32 ml-4'>
+                <svg
+                  width='100%'
+                  height='10'
+                  viewBox='0 0 100 10'
+                  preserveAspectRatio='none'
+                  xmlns='http://www.w3.org/2000/svg'>
+                  <path
+                    d='M0,10 Q50,0 100,10'
+                    stroke='#334155'
+                    strokeWidth='2'
+                    fill='none'
+                  />
+                </svg>
+              </div>
+            </div>
             <div className='flex gap-8 flex-wrap overflow-x-auto'>
               {relatedProducts.map((relatedProduct) => (
                 <Link
