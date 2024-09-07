@@ -4,21 +4,26 @@ import React, { useEffect, useState } from 'react';
 import { getProducts } from '@/lib/api';
 import ProductCard from '@/ui/ProductCard';
 import ProductSkeleton from '@/ui/ProductSkeleton';
-import { FaChevronLeft } from 'react-icons/fa';
-import { FaChevronRight } from 'react-icons/fa';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 const ProductPage = () => {
   const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]); // For filtered products
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 6;
+
+  // Search and Filter States
+  const [searchTerm, setSearchTerm] = useState('');
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const fetchedProducts = await getProducts(); // Fetch all products
-        console.log('Fetched products:', fetchedProducts); // Debug log
         setProducts(fetchedProducts); // Set all products
+        setFilteredProducts(fetchedProducts); // Initialize filtered products
       } catch (error) {
         console.error('Error fetching products:', error);
       } finally {
@@ -33,9 +38,44 @@ const ProductPage = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top when page changes
   }, [currentPage]);
 
-  const totalPages = Math.ceil(products.length / productsPerPage); // Calculate total pages
+  // Search and Filter Logic
+  const handleSearch = (e) => {
+    const term = e.target.value.toLowerCase();
+    setSearchTerm(term);
+    filterProducts(term, minPrice, maxPrice);
+  };
+
+  const handlePriceChange = () => {
+    filterProducts(searchTerm, minPrice, maxPrice);
+  };
+
+  const filterProducts = (term, minPrice, maxPrice) => {
+    let filtered = products;
+
+    // Filter by search term
+    if (term) {
+      filtered = filtered.filter((product) =>
+        product.name.toLowerCase().includes(term)
+      );
+    }
+
+    // Filter by price range
+    if (minPrice !== '' || maxPrice !== '') {
+      filtered = filtered.filter((product) => {
+        const price = product.price;
+        const min = parseFloat(minPrice) || 0;
+        const max = parseFloat(maxPrice) || Infinity;
+        return price >= min && price <= max;
+      });
+    }
+
+    setFilteredProducts(filtered);
+    setCurrentPage(1); // Reset to first page after filtering
+  };
+
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage); // Calculate total pages
   const startIndex = (currentPage - 1) * productsPerPage;
-  const displayedProducts = products.slice(
+  const displayedProducts = filteredProducts.slice(
     startIndex,
     startIndex + productsPerPage
   ); // Paginate
@@ -55,7 +95,7 @@ const ProductPage = () => {
   return (
     <div className='min-h-screen px-5 py-5 md:px-14 md:py-14'>
       <div className='relative mb-8 flex justify-between items-center'>
-        <div className='flex items-center '>
+        <div className='flex items-center'>
           <h1 className='text-xl md:text-3xl'>All Products</h1>
           <span className='ml-4 text-sm text-gray-500'>
             Page {currentPage} of {totalPages}
@@ -78,6 +118,42 @@ const ProductPage = () => {
         </div>
       </div>
 
+      {/* Search and Filter Section */}
+      <div className='flex flex-col md:flex-row md:space-x-4 mb-4'>
+        {/* Search */}
+        <input
+          type='text'
+          placeholder='Search by name...'
+          value={searchTerm}
+          onChange={handleSearch}
+          className='px-4 py-2 w-full border rounded-md mb-2 md:mb-0'
+        />
+
+        {/* Price Range Filter */}
+        <div className='flex flex-col md:flex-row md:space-x-4 gap-2'>
+          <input
+            type='number'
+            placeholder='Min Price'
+            value={minPrice}
+            onChange={(e) => setMinPrice(e.target.value)}
+            className='px-4 py-2 border rounded-md'
+          />
+          <input
+            type='number'
+            placeholder='Max Price'
+            value={maxPrice}
+            onChange={(e) => setMaxPrice(e.target.value)}
+            className='px-4 py-2 border rounded-md'
+          />
+          <button
+            onClick={handlePriceChange}
+            className='px-4 py-2 bg-green-700 hover:bg-orange-600 text-white rounded-md'>
+            Filter
+          </button>
+        </div>
+      </div>
+
+      {/* Products Grid */}
       <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6'>
         {loading
           ? Array(6)
@@ -89,7 +165,7 @@ const ProductPage = () => {
       </div>
 
       {/* Pagination Controls */}
-      {!loading && products.length > 0 && (
+      {!loading && filteredProducts.length > 0 && (
         <div className='flex justify-between items-center mt-8'>
           <button
             onClick={handlePreviousPage}
