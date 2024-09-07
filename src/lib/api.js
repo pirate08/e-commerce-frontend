@@ -181,6 +181,8 @@ const products = [
   },
 ];
 
+const orders = [];
+
 export const getProducts = () => {
   return Promise.resolve(products); // Return all products, no limit here
 };
@@ -201,4 +203,15 @@ export const login = (email, password) => {
 export const signup = (email, password) => {
   // Demo signup, always succeeds
   return Promise.resolve({ id: 2, email });
+};
+
+// --Create a new order--
+export const createOrder = (order) => {
+  orders.push(order);
+  return Promise.resolve(order); // Simulate posting the order
+};
+
+// Retrieve all orders
+export const getOrders = () => {
+  return Promise.resolve(orders); // Return the orders
 };
