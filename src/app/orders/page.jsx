@@ -64,10 +64,12 @@ export default function MyOrdersPage() {
               <h3 className='text-md font-semibold mb-2'>Items:</h3>
               {order.items.map((item, itemIndex) => (
                 <div key={itemIndex} className='flex items-center mb-2'>
-                  <img
+                  <Image
                     src={item.image}
                     alt={item.name}
-                    className='w-20 h-20 mr-4'
+                    className='mr-4'
+                    width={100}
+                    height={100}
                   />
                   <div>
                     <p>{item.name}</p>

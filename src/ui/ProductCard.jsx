@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const ProductCard = ({ product }) => {
   // Ensure the product exists and has valid properties
@@ -13,8 +14,14 @@ const ProductCard = ({ product }) => {
   return (
     <Link href={`/products/${id}`} passHref>
       <div className='transform overflow-hidden bg-white duration-200 hover:scale-125 cursor-pointer'>
-        <img src={image} className='w-full h-64 object-cover mb-5' alt={name} />
-        <div className='p-4 text-black/[0.9]'>
+        <Image
+          src={image}
+          alt={name}
+          width={500}
+          height={500}
+          className='w-full h-64 object-cover mb-2'
+        />
+        <div className='p-3 text-black/[0.9]'>
           <h2 className='text-lg font-medium'>{name}</h2>
           <div className='flex items-center justify-between'>
             <div className='flex gap-2 items-center text-black/[0.9]'>

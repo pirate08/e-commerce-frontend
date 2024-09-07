@@ -5,11 +5,10 @@ import { BsChevronDown } from 'react-icons/bs';
 // --NavItems--
 const data = [
   { id: 1, name: 'Home', url: '/' },
-  { id: 2, name: 'About', url: '/about' },
-  { id: 3, name: 'Categories', subMenu: true },
-  { id: 4, name: 'Products', url: '/products' },
-  { id: 5, name: 'My Orders', url: '/orders' },
-  { id: 6, name: 'Contact', url: '/contact' },
+  { id: 2, name: 'Categories', subMenu: true },
+  { id: 3, name: 'Products', url: '/products' },
+  { id: 4, name: 'My Orders', url: '/orders' },
+  { id: 5, name: 'Contact', url: '/contact' },
 ];
 
 // --Sub NavItems--

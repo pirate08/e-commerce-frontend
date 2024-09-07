@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Wrapper from './Wrapper';
 
 import Link from 'next/link';
@@ -11,6 +11,7 @@ import { BsCart } from 'react-icons/bs';
 import { BiMenuAltRight } from 'react-icons/bi';
 import { VscChromeClose } from 'react-icons/vsc';
 import { useCart } from '@/context/CartContext';
+import Image from 'next/image';
 
 const Header = () => {
   const [mobileMenu, setMobileMenu] = useState(false);
@@ -20,7 +21,7 @@ const Header = () => {
   const { cart } = useCart();
   const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
 
-  const controlNavbar = () => {
+  const controlNavbar = useCallback(() => {
     if (window.scrollY > 200) {
       if (window.scrollY > lastScrollY && !mobileMenu) {
         setShow('-translate-y-[80px]');
@@ -31,21 +32,21 @@ const Header = () => {
       setShow('translate-y-0');
     }
     setLastScrollY(window.scrollY);
-  };
+  }, [lastScrollY, mobileMenu]); // Add dependencies here
 
   useEffect(() => {
     window.addEventListener('scroll', controlNavbar);
     return () => {
       window.removeEventListener('scroll', controlNavbar);
     };
-  }, [lastScrollY]);
+  }, [controlNavbar]); // Now it's safe to include controlNavbar
 
   return (
     <header
       className={`w-full h-[50px] md:h-[80px] bg-white flex items-center justify-between z-20 sticky top-0 transition-transform duration-300 ${show}`}>
       <Wrapper className='h-[60px] flex justify-between items-center'>
         <Link href='/'>
-          <img src='/logo.svg' className='w-[40px] md:w-[60px]' />
+          <Image src='/logo.svg' width={60} height={80} alt='Main Logo...' />
         </Link>
 
         <Menu showCatMenu={showCatMenu} setShowCatMenu={setShowCatMenu} />
